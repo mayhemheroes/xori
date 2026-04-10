@@ -68,7 +68,7 @@ macro_rules! get_operand {
                     debug!("unknown operand");
                     0
                 },
-            };
+            }
     }
 }
 
