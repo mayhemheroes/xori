@@ -6,9 +6,18 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --de
 ENV PATH="/root/.cargo/bin:${PATH}"
 RUN cargo install -f cargo-fuzz
 
-ADD . /src
+# Pre-compile dependencies (cached as long as Cargo.lock doesn't change)
+COPY Cargo.toml /src/
+COPY fuzz/Cargo.toml /src/fuzz/
+RUN mkdir -p /src/src /src/fuzz/fuzz_targets && \
+    echo > /src/src/lib.rs && \
+    printf '#![no_main]\nuse libfuzzer_sys::fuzz_target;\nfuzz_target!(|_data: &[u8]| {});\n' \
+        > /src/fuzz/fuzz_targets/simple.rs
 WORKDIR /src
+RUN cargo +nightly fuzz build || true
 
+# Build with real source
+ADD . /src
 RUN cargo +nightly fuzz build && \
     mv fuzz/target/x86_64-unknown-linux-gnu/release/simple /simple
 
