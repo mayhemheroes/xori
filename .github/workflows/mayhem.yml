@@ -3,6 +3,7 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+  workflow_call:
 
 env:
   REGISTRY: ghcr.io
@@ -61,4 +62,4 @@ jobs:
       uses: forallsecure/mcode-action@long-runs
       with:
         mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
-        args: --image ${{ needs.build.outputs.image }} --file ${{ matrix.mayhemfile }} --duration 300
+        args: --image ${{ needs.build.outputs.image }} --file ${{ matrix.mayhemfile }}
