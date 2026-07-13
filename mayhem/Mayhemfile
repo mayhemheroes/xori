@@ -1,0 +1,5 @@
+project: xori
+target: simple
+
+cmds:
+  - cmd: /mayhem/simple
